@@ -7,7 +7,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class Review {
-    private String userName;
+
+    private String userId;
     private Integer rating;
     private String review;
 

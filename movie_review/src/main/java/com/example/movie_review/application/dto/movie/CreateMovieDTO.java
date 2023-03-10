@@ -1,19 +1,21 @@
 package com.example.movie_review.application.dto.movie;
 
-import com.example.movie_review.domain.movie.Genre;
-import com.example.movie_review.domain.review.Review;
-import lombok.Getter;
 
-import java.io.File;
+import com.example.movie_review.domain.movie.Genre;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 @Getter
+@AllArgsConstructor
 public class CreateMovieDTO {
     private String title;
     private String description;
     private Genre genre;
-    private File thumbnail;
     private Integer year;
     private List<String> actors;
+    private MultipartFile multipartFile;
 
 }

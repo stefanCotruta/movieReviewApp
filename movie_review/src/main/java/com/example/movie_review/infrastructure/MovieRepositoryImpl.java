@@ -34,6 +34,6 @@ public class MovieRepositoryImpl implements MovieRepositoryI {
     @Override
     public void deleteMovie(final String id) {
         final Query query = new Query(Criteria.where("_id").is(id));
-        this.mongoTemplate.remove(query);
+        this.mongoTemplate.remove(query, Movie.class);
     }
 }

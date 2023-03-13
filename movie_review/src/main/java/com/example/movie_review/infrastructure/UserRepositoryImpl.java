@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+
 @Repository
 @AllArgsConstructor
 public class UserRepositoryImpl implements UserRepositoryI {
@@ -22,11 +23,6 @@ public class UserRepositoryImpl implements UserRepositoryI {
     }
 
     @Override
-    public List<User> getUsers() {
-        return this.mongoTemplate.findAll(User.class);
-    }
-
-    @Override
     public User getById(final String id) {
         return this.mongoTemplate.findById(id, User.class);
     }
@@ -34,6 +30,12 @@ public class UserRepositoryImpl implements UserRepositoryI {
     @Override
     public void deleteUser(final String id) {
         final Query query = new Query(Criteria.where("_id").is(id));
-        this.mongoTemplate.remove(query);
+        this.mongoTemplate.remove(query, User.class);
+    }
+
+    @Override
+    public boolean checkEmail(final String email){
+        final Query query = new Query(Criteria.where("email").is(email));
+        return this.mongoTemplate.exists(query, User.class);
     }
 }

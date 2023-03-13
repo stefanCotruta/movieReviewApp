@@ -25,27 +25,12 @@ public class MovieRestController {
     private MovieService movieService;
 
     @PostMapping(value = "/movie")
-    public ResponseEntity<Void> createMovie(final @RequestPart("title") String title,
-                                            final @RequestPart("description") String description,
-                                            final @RequestPart("genre") String genre,
-                                            final @RequestPart("year") String year,
-                                            final @RequestPart("actors") String actors,
+    public ResponseEntity<Void> createMovie(final @RequestPart CreateMovieDTO dto,
                                             final @RequestPart("file") MultipartFile file) throws IOException {
 
-        final List<String> actorList = new ArrayList<String>(
-                Arrays.asList(actors.split(",")))
-                .stream().map(String::trim).toList();
-
-        final CreateMovieDTO dto = new CreateMovieDTO(
-                title,
-                description,
-                Genre.valueOf(genre),
-                Integer.parseInt(year),
-                actorList,
-                file);
+        dto.setMultipartFile(file);
 
         this.movieService.createMovie(dto);
-
 
         return ResponseEntity.ok().build();
     }

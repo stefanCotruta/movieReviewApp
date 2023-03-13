@@ -52,14 +52,6 @@ public class MovieService {
                 saveThumbnail(dto.getMultipartFile())
                 );
 
-        System.out.println(movie.getId());
-        System.out.println(movie.getTitle());
-        System.out.println(movie.getDescription());
-        System.out.println(movie.getGenre());
-        System.out.println(movie.getYear());
-        System.out.println(movie.getThumbnailId());
-        System.out.println(movie.getActors());
-
         this.movieRepository.saveMovie(movie);
     }
 

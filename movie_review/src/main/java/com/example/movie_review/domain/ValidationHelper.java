@@ -51,4 +51,27 @@ public class ValidationHelper {
         }
     }
 
+
+    public void validateName(final String name){
+        if (name.length() > 30){
+            throw new RuntimeException("Name is too long");
+        }
+    }
+
+    public void validatePassword(final String password){
+        if (password.length() < 8 || password.length() > 30){
+            throw new RuntimeException("Incorrect length of password");
+        }
+
+        if (!password.matches(".*\\d+.*")){
+            throw new RuntimeException("Password needs to contain at least 1 number");
+        }
+    }
+
+    public void validateEmail(final String email){
+        if (email.length() < 3 || email.length() > 50 || !email.contains("@")){
+            throw new RuntimeException("Email form not suitable");
+        }
+    }
+
 }

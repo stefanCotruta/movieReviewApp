@@ -5,6 +5,8 @@ import lombok.Getter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
+
 @AllArgsConstructor
 @Getter
 @Document
@@ -20,4 +22,6 @@ public class User {
         this.name = name;
         this.password = password;
     }
+
+
 }

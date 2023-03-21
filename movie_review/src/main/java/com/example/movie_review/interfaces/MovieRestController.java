@@ -1,8 +1,9 @@
 package com.example.movie_review.interfaces;
 
 import com.example.movie_review.application.dto.movie.CreateMovieDTO;
+import com.example.movie_review.application.dto.review.CreateReviewDTO;
+import com.example.movie_review.application.dto.review.EditReviewDTO;
 import com.example.movie_review.application.service.MovieService;
-import com.example.movie_review.domain.movie.Genre;
 import com.example.movie_review.domain.movie.Movie;
 import com.example.movie_review.domain.movie.Thumbnail;
 import lombok.AllArgsConstructor;
@@ -14,9 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -50,4 +48,27 @@ public class MovieRestController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + loadFile.getFilename() + "\"")
                 .body(new ByteArrayResource(loadFile.getFile()));
     }
+
+
+    @PostMapping("/review/{movieId}")
+    public ResponseEntity<Void> addReview(final @PathVariable String movieId, final @RequestBody CreateReviewDTO dto){
+        this.movieService.addReview(movieId, dto);
+        return ResponseEntity.ok().build();
+    }
+
+
+    @PatchMapping("/review/update")
+    public ResponseEntity<Void> addReview(final @RequestBody EditReviewDTO dto){
+        this.movieService.editReview(dto);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/review/{movieId}/{reviewId}")
+    public ResponseEntity<Void> deleteReview(final @PathVariable String movieId, final @PathVariable String reviewId){
+        this.movieService.deleteReview(movieId, reviewId);
+        return ResponseEntity.ok().build();
+    }
+
+
+
 }

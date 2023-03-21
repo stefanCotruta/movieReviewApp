@@ -1,7 +1,9 @@
 package com.example.movie_review.application.service;
 
 import com.example.movie_review.application.dto.movie.CreateMovieDTO;
-import com.example.movie_review.application.dto.review.CreateEditReviewDTO;
+import com.example.movie_review.application.dto.review.CreateReviewDTO;
+import com.example.movie_review.application.dto.review.EditReviewDTO;
+import com.example.movie_review.domain.ValidationHelper;
 import com.example.movie_review.domain.movie.Movie;
 import com.example.movie_review.domain.movie.MovieRepositoryI;
 import com.example.movie_review.domain.movie.Thumbnail;
@@ -21,12 +23,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDate;
-
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
-
-
 
 
 @Service
@@ -37,10 +36,13 @@ public class MovieService {
     @Autowired
     private GridFsOperations operations;
     private MovieRepositoryI movieRepository;
+    private ValidationHelper validationHelper;
 
     public void createMovie(final CreateMovieDTO dto) throws IOException {
 
-        validateData(dto);
+        this.validationHelper.validateMovie(dto);
+
+        List<Review> reviews = new ArrayList<>();
 
         final Movie movie = new Movie(
                 UUID.randomUUID().toString(),
@@ -49,7 +51,8 @@ public class MovieService {
                 dto.getGenre(),
                 dto.getYear(),
                 dto.getActors(),
-                saveThumbnail(dto.getMultipartFile())
+                saveThumbnail(dto.getMultipartFile()),
+                reviews
                 );
 
         this.movieRepository.saveMovie(movie);
@@ -64,32 +67,11 @@ public class MovieService {
             return fileID.toString();
     }
 
-    private void validateData(final CreateMovieDTO dto){
-        if(dto.getTitle().isEmpty() || dto.getTitle().length()>30){
-            throw new RuntimeException("Choose another title");
-        }
 
-        if (dto.getDescription().isEmpty() || dto.getDescription().length() > 1000){
-            throw new RuntimeException("Chose another description");
-        }
-
-        if (dto.getActors().size() > 10){
-            throw new RuntimeException("Too many actors");
-        }
-
-        if (dto.getYear()< 1900 || dto.getYear()> LocalDate.now().getYear()){
-            throw new RuntimeException("Choose another year");
-        }
-
-        if (!Objects.requireNonNull(dto.getMultipartFile().getContentType()).contains("image")) {
-            throw new RuntimeException("File is not an Image");
-        }
-    }
 
     public Movie getMovie(final String id){
         return this.movieRepository.getById(id);
     }
-
 
     public Thumbnail downloadFile(final String id) throws IOException {
         final GridFSFile gridFSFile = template.findOne( new Query(Criteria.where("_id").is(id)) );
@@ -109,7 +91,56 @@ public class MovieService {
     }
 
 
+    public void addReview(final String movieId, final CreateReviewDTO dto){
+        this.validationHelper.validateReview(dto);
+
+        final Movie movie = this.movieRepository.getById(movieId);
+        final Review review = new Review(
+                UUID.randomUUID().toString(),
+                dto.getUserId(),
+                dto.getRating(),
+                dto.getReview()
+        );
+        movie.addReview(review);
+
+        this.movieRepository.saveMovie(movie);
+    }
 
 
+    public void editReview(final EditReviewDTO dto){
+        this.validationHelper.validateReview(dto);
+
+        final Review review = getReviewById(dto.getMovieId(), dto.getReviewId());
+        final Movie movie = this.movieRepository.getById(dto.getMovieId());
+
+        movie.getReviews().removeIf(rv -> rv.getReviewId().equals(dto.getReviewId()));
+
+        review.editReview(dto.getRating(), dto.getReview());
+
+        movie.getReviews().add(review);
+
+        this.movieRepository.saveMovie(movie);
+    }
+
+
+    private Review getReviewById(final String movieId, final String reviewId){
+        final Movie movie = this.movieRepository.getById(movieId);
+
+        for(Review rv : movie.getReviews()){
+            if (rv.getReviewId().equals(reviewId)){
+                return rv;
+            }
+        }
+
+        throw new RuntimeException("Review not found");
+    }
+
+    public void deleteReview(final String movieId, final String reviewId){
+        final Movie movie = this.movieRepository.getById(movieId);
+
+        movie.getReviews().removeIf(rv -> rv.getReviewId().equals(reviewId));
+
+        this.movieRepository.saveMovie(movie);
+    }
 
 }

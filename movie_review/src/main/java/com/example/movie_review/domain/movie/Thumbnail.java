@@ -6,13 +6,13 @@ import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class Thumbnail {
     private String filename;
     private String fileType;
     private String fileSize;
     private byte[] file;
 
-public Thumbnail(){};
 
 
 }

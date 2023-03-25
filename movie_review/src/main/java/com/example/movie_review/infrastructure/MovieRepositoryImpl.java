@@ -2,7 +2,6 @@ package com.example.movie_review.infrastructure;
 
 import com.example.movie_review.domain.movie.Movie;
 import com.example.movie_review.domain.movie.MovieRepositoryI;
-import com.example.movie_review.domain.review.Review;
 import lombok.AllArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -38,8 +37,5 @@ public class MovieRepositoryImpl implements MovieRepositoryI {
         this.mongoTemplate.remove(query, Movie.class);
     }
 
-//    @Override
-//    public Review getReviewById(final String id){
-//        return this.mongoTemplate.findById(id, Review.class);
-//    }
+
 }
